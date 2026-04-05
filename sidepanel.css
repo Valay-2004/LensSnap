@@ -1,33 +1,70 @@
+:root {
+  --bg: #1a1a1a;
+  --panel: #252525;
+  --primary: #00ff88;
+  --primary-hover: #00e67a;
+  --text: #ffffff;
+  --text-dim: #aaaaaa;
+  --button-hover: #333333;
+  --shadow: rgba(0, 0, 0, 0.4);
+}
+
 * {
   box-sizing: border-box;
 }
+
 body {
   margin: 0;
   font-family:
     system-ui,
     -apple-system,
     sans-serif;
-  background: #1a1a1a;
-  color: #fff;
+  background: var(--bg);
+  color: var(--text);
   height: 100vh;
-  overflow: hidden;
+  /* Remove overflow:hidden from body to allow Cropper.js handles in small viewports */
+  overflow: auto;
 }
+
 .container {
   padding: 16px;
   height: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
+
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 20px;
 }
+
 h1 {
   margin: 0;
-  font-size: 22px;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.5px;
 }
+
+#recapture {
+  background: transparent;
+  border: 1px solid #444;
+  color: var(--text-dim);
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+#recapture:hover {
+  background: var(--button-hover);
+  color: var(--text);
+  border-color: #666;
+}
+
 .preview-wrapper {
   flex: 1;
   background: #111;
@@ -36,38 +73,130 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid #222;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+  margin-bottom: 16px;
+  position: relative;
 }
+
 .preview-wrapper img {
   max-width: 100%;
   max-height: 100%;
 }
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-dim);
+}
+
+.empty-state p {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.empty-state span {
+  font-size: 13px;
+  opacity: 0.6;
+}
+
 .controls,
 .search-panel {
-  margin-top: 16px;
+  margin-top: 10px;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
-.engines {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 10px;
+
+.hidden {
+  opacity: 0;
+  visibility: hidden;
+  height: 0;
+  margin: 0;
+  pointer-events: none;
+  overflow: hidden;
 }
-.engines button {
+
+#confirm-crop {
+  width: 100%;
   padding: 14px;
-  background: #2a2a2a;
+  background: var(--primary);
+  color: #000;
   border: none;
-  border-radius: 8px;
-  color: #fff;
+  border-radius: 10px;
+  font-weight: 600;
   font-size: 15px;
   cursor: pointer;
+  transition:
+    transform 0.1s,
+    background 0.2s;
 }
+
+#confirm-crop:hover {
+  background: var(--primary-hover);
+}
+
+#confirm-crop:active {
+  transform: scale(0.98);
+}
+
+.search-panel h3 {
+  font-size: 14px;
+  margin: 0 0 12px;
+  font-weight: 400;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.engines {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.engines button {
+  padding: 16px 12px;
+  background: var(--panel);
+  border: 1px solid #333;
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
 .engines button:hover {
-  background: #3a3a3a;
+  background: #333;
+  border-color: #555;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow);
 }
+
+.engines button:active {
+  transform: translateY(0);
+}
+
 .hint {
-  font-size: 13px;
-  opacity: 0.7;
+  font-size: 12px;
+  color: var(--text-dim);
   text-align: center;
-  margin-top: 12px;
+  margin-top: 20px;
+  line-height: 1.6;
 }
-.hidden {
-  display: none !important;
+
+/* Cropper JS Overrides */
+.cropper-line,
+.cropper-point {
+  background-color: var(--primary) !important;
+}
+
+.cropper-view-box {
+  outline-color: var(--primary) !important;
 }

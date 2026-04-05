@@ -3,18 +3,32 @@ let finalBlob = null;
 
 async function loadCurrentImage() {
   const resp = await chrome.runtime.sendMessage({ action: "getCurrentImage" });
+  const wrapper = document.getElementById("preview-wrapper");
+  
   if (!resp?.image) {
-    document.getElementById("preview-wrapper").innerHTML =
-      `<p style="color:#aaa;text-align:center;padding:40px;">No image yet.<br>Click the LensSnap icon to capture.</p>`;
+    wrapper.innerHTML = `<div class="empty-state">
+      <p>No image yet.</p>
+      <span>Click the LensSnap icon to capture.</span>
+    </div>`;
     return;
   }
 
-  const img = document.getElementById("preview");
-  img.src = resp.image;
+  // Clear wrapper and create preview image
+  wrapper.innerHTML = '';
+  const img = document.createElement("img");
+  img.id = "preview";
+  img.alt = "Captured image";
+  wrapper.appendChild(img);
 
+  // Destroy previous instance if it exists
+  if (cropperInstance) {
+    cropperInstance.destroy();
+    cropperInstance = null;
+  }
+
+  // Set onload BEFORE src to handle cached data URLs
   img.onload = () => {
     cropperInstance = new Cropper(img, {
-      aspectRatio: NaN,
       viewMode: 1,
       autoCropArea: 0.9,
       responsive: true,
@@ -25,16 +39,12 @@ async function loadCurrentImage() {
       scalable: true,
     });
   };
-}
-
-function dataURLtoBlob(dataUrl) {
-  const arr = dataUrl.split(",");
-  const mime = arr[0].match(/:(.*?);/)[1];
-  const bstr = atob(arr[1]);
-  let n = bstr.length;
-  const u8arr = new Uint8Array(n);
-  while (n--) u8arr[n] = bstr.charCodeAt(n);
-  return new Blob([u8arr], { type: mime });
+  
+  img.src = resp.image;
+  
+  // Show crop controls, hide search panel
+  document.getElementById("crop-controls").classList.remove("hidden");
+  document.getElementById("search-panel").classList.add("hidden");
 }
 
 // Confirm crop
@@ -44,18 +54,26 @@ document.getElementById("confirm-crop").addEventListener("click", () => {
   const canvas = cropperInstance.getCroppedCanvas({
     imageSmoothingQuality: "high",
   });
-  const croppedDataUrl = canvas.toDataURL("image/png", 0.95);
+  
+  // Use toBlob directly for better performance and memory management
+  canvas.toBlob((blob) => {
+    finalBlob = blob;
+    const croppedDataUrl = URL.createObjectURL(blob);
 
-  finalBlob = dataURLtoBlob(croppedDataUrl);
+    // Replace with final cropped image (static)
+    const wrapper = document.getElementById("preview-wrapper");
+    wrapper.innerHTML = '';
+    const finalImg = document.createElement("img");
+    finalImg.src = croppedDataUrl;
+    finalImg.classList.add("cropped-result");
+    wrapper.appendChild(finalImg);
 
-  // Replace with final cropped image (static)
-  const wrapper = document.getElementById("preview-wrapper");
-  wrapper.innerHTML = `<img src="${croppedDataUrl}" style="max-width:100%; border-radius:8px;">`;
+    document.getElementById("crop-controls").classList.add("hidden");
+    document.getElementById("search-panel").classList.remove("hidden");
 
-  document.getElementById("crop-controls").classList.add("hidden");
-  document.getElementById("search-panel").classList.remove("hidden");
-
-  cropperInstance.destroy();
+    cropperInstance.destroy();
+    cropperInstance = null;
+  }, "image/png");
 });
 
 // Search engine buttons
@@ -64,8 +82,9 @@ document.querySelectorAll(".engines button").forEach((btn) => {
     if (!finalBlob) return;
 
     try {
+      // Write to clipboard as file
       await navigator.clipboard.write([
-        new ClipboardItem({ "image/png": finalBlob }),
+        new ClipboardItem({ [finalBlob.type]: finalBlob }),
       ]);
 
       let url = "";
@@ -85,15 +104,22 @@ document.querySelectorAll(".engines button").forEach((btn) => {
       }
       chrome.tabs.create({ url });
     } catch (err) {
-      console.error(err);
+      console.error("Clipboard write error/Search failed:", err);
     }
   });
 });
 
 // Recapture
 document.getElementById("recapture").addEventListener("click", () => {
-  chrome.runtime.sendMessage({ action: "startCapture" }); // optional – you can extend service-worker to re-inject overlay
-  // For now, user can just click the browser icon again
+  chrome.runtime.sendMessage({ action: "startCapture" });
 });
 
-window.onload = loadCurrentImage;
+window.addEventListener("load", loadCurrentImage);
+
+// Listen for new captures to refresh the side panel automatically
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.action === "captureRegion" || message.action === "refreshSidePanel") {
+    // Small delay to ensure the data is set in service worker
+    setTimeout(loadCurrentImage, 100);
+  }
+});

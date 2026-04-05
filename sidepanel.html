@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LensSnap</title>
     <link rel="stylesheet" href="sidepanel.css" />
+    <link rel="stylesheet" href="cropper.min.css">
     <script src="cropper.min.js"></script>
 </head>
-
 <body>
     <div class="container">
         <header>
             <h1>LensSnap</h1>
-            <button id="recapture">Recapture</button>
+            <button id="recapture" aria-label="Recapture">Recapture</button>
         </header>
 
         <div id="preview-wrapper" class="preview-wrapper">
@@ -20,16 +20,16 @@
         </div>
 
         <div id="crop-controls" class="controls">
-            <button id="confirm-crop">Confirm Crop</button>
+            <button id="confirm-crop" class="primary-btn">Confirm Crop</button>
         </div>
 
         <div id="search-panel" class="search-panel hidden">
             <h3>Search with copied image</h3>
             <div class="engines">
-                <button data-engine="google">Google Lens</button>
-                <button data-engine="yandex">Yandex</button>
-                <button data-engine="bing">Bing Visual</button>
-                <button data-engine="tineye">TinEye</button>
+                <button data-engine="google" class="engine-btn">Google Lens</button>
+                <button data-engine="yandex" class="engine-btn">Yandex</button>
+                <button data-engine="bing" class="engine-btn">Bing Visual</button>
+                <button data-engine="tineye" class="engine-btn">TinEye</button>
             </div>
             <p class="hint">
                 Image copied to clipboard ✓<br />Paste on the opened page if needed.
@@ -39,48 +39,4 @@
 
     <script src="sidepanel.js"></script>
 </body>
-
-</html>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <title>LensSnap</title>
-    <link rel="stylesheet" href="sidepanel.css" />
-    <script src="cropper.min.js"></script>
-</head>
-
-<body>
-    <div class="container">
-        <header>
-            <h1>LensSnap</h1>
-            <button id="recapture">Recapture</button>
-        </header>
-
-        <div id="preview-wrapper" class="preview-wrapper">
-            <img id="preview" alt="Captured image" />
-        </div>
-
-        <div id="crop-controls" class="controls">
-            <button id="confirm-crop">Confirm Crop</button>
-        </div>
-
-        <div id="search-panel" class="search-panel hidden">
-            <h3>Search with copied image</h3>
-            <div class="engines">
-                <button data-engine="google">Google Lens</button>
-                <button data-engine="yandex">Yandex</button>
-                <button data-engine="bing">Bing Visual</button>
-                <button data-engine="tineye">TinEye</button>
-            </div>
-            <p class="hint">
-                Image copied to clipboard ✓<br />Paste on the opened page if needed.
-            </p>
-        </div>
-    </div>
-
-    <script src="sidepanel.js"></script>
-</body>
-
 </html>
