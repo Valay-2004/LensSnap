@@ -1,0 +1,6 @@
+{
+    "manifest_version": 3,
+    "name": "LensScap",
+    "version": 0.1,
+    "description": "This extension let's you capture your webpage with variable size and then search it on multiple image search engines"
+}
