@@ -191,6 +191,50 @@ h1 {
   line-height: 1.6;
 }
 
+/* AI Analysis Panel Styling */
+/*
+.ai-panel {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #333;
+}
+
+.ai-panel h4 {
+  font-size: 13px;
+  color: var(--primary);
+  margin: 0 0 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ai-placeholder {
+  background: #2a2a2a;
+  border: 1px dashed #444;
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+  cursor: default;
+}
+
+.ai-placeholder span {
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--primary);
+  color: #000;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+.ai-placeholder p {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.4;
+  margin: 0;
+} */
+
 /* Cropper JS Overrides */
 .cropper-line,
 .cropper-point {
