@@ -1,6 +1,21 @@
 {
-    "manifest_version": 3,
-    "name": "LensScap",
-    "version": 0.1,
-    "description": "This extension let's you capture your webpage with variable size and then search it on multiple image search engines"
+  "manifest_version": 3,
+  "name": "LensSnap",
+  "version": "1.0",
+  "description": "This extension let's you capture your webpage with variable size and then search it on multiple image search engines",
+  "permissions": ["activeTab", "scripting", "tabs", "clipboardWrite", "sidePanel"],
+  "host_permissions": ["<all_urls>"],
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "action": {
+    "default_title": "Capture & Search",
+    "default_icon": "icons/icon-128.png"
+  },
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "icons": {
+    "128": "icons/icon-128.png"
+  }
 }
